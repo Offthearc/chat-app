@@ -52,8 +52,8 @@
     {
       "id": "FDEPLOY",
       "name": "Deploy to Vercel",
-      "status": "pending",
-      "verification": "vercel --prod returns a live https:// URL"
+      "status": "done",
+      "verification": "https://chat-app-wheat-two-84.vercel.app"
     }
   ]
 }
