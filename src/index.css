@@ -309,3 +309,29 @@ a:hover { text-decoration: underline; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .auth-card {
+    padding: 24px 16px;
+    border-radius: 4px;
+    box-shadow: none;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .app-header { padding: 0 10px; }
+  .header-right .uname { display: none; }
+
+  .messages { padding: 10px; }
+
+  .input-bar { padding: 0 8px 12px; }
+
+  .msg-avatar { width: 30px; height: 30px; font-size: 12px; flex-shrink: 0; }
+
+  .chat-hd { padding: 8px 12px; }
+
+  .profile-content { padding: 20px 12px; }
+}
