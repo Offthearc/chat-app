@@ -11,24 +11,48 @@
       "id": "F002",
       "name": "App shell with routing",
       "status": "done",
-      "verification": "npm run dev starts without errors, /chat and /articles routes work"
+      "verification": "npm run dev starts without errors"
     },
     {
       "id": "F003",
-      "name": "Chat interface",
+      "name": "User authentication",
       "status": "done",
-      "verification": "User can send messages, bot replies, messages scroll into view"
+      "verification": "Register, login, logout work; session persists in localStorage"
     },
     {
       "id": "F004",
-      "name": "Article polling",
+      "name": "Multi-room chat messaging",
       "status": "done",
-      "verification": "Articles feed updates on interval, pause/resume works"
+      "verification": "Users can send messages in General, Random, Tech rooms; messages persist"
+    },
+    {
+      "id": "F005",
+      "name": "Real-time messaging",
+      "status": "done",
+      "verification": "Messages broadcast across browser tabs via BroadcastChannel API"
+    },
+    {
+      "id": "F006",
+      "name": "Direct messages",
+      "status": "done",
+      "verification": "Users can send private messages to other users"
+    },
+    {
+      "id": "F007",
+      "name": "Profile management",
+      "status": "done",
+      "verification": "Users can update username, bio, avatar URL; changes reflect across app"
+    },
+    {
+      "id": "F008",
+      "name": "Create custom rooms",
+      "status": "done",
+      "verification": "Users can create new chat rooms from sidebar"
     },
     {
       "id": "FDEPLOY",
       "name": "Deploy to Vercel",
-      "status": "done",
+      "status": "pending",
       "verification": "vercel --prod returns a live https:// URL"
     }
   ]

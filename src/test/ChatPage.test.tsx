@@ -1,40 +1,82 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import type { ReactElement } from 'react'
+import { render, screen, fireEvent, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { AuthProvider } from '../contexts/AuthContext'
+import { ChatProvider } from '../contexts/ChatContext'
 import { ChatPage } from '../pages/ChatPage'
+import { storage, hashPassword } from '../utils/storage'
 
-function renderChat() {
+function buildUser(username = 'tester') {
+  return {
+    id: 'user-1',
+    username,
+    email: `${username}@test.com`,
+    avatar: '',
+    bio: '',
+    createdAt: 0,
+    passwordHash: hashPassword('pass'),
+  }
+}
+
+function wrap(ui: ReactElement) {
   return render(
     <MemoryRouter>
-      <ChatPage />
+      <AuthProvider>
+        <ChatProvider>{ui}</ChatProvider>
+      </AuthProvider>
     </MemoryRouter>,
   )
 }
 
 describe('ChatPage', () => {
-  it('renders welcome message', () => {
-    renderChat()
-    expect(screen.getByText(/Welcome to Chat App/i)).toBeInTheDocument()
+  beforeEach(() => {
+    localStorage.clear()
+    const user = buildUser()
+    storage.saveUsers({ [user.id]: user })
+    storage.setSession(user.id)
   })
 
-  it('sends a message when form is submitted', async () => {
-    renderChat()
+  it('renders default rooms in sidebar', () => {
+    wrap(<ChatPage />)
+    // sidebar buttons carry accessible name "# RoomName"
+    expect(screen.getByRole('button', { name: /# general/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /# random/i })).toBeInTheDocument()
+  })
+
+  it('shows message input', () => {
+    wrap(<ChatPage />)
+    expect(screen.getByRole('textbox', { name: /message input/i })).toBeInTheDocument()
+  })
+
+  it('send button disabled when input empty', () => {
+    wrap(<ChatPage />)
+    expect(screen.getByRole('button', { name: /send/i })).toBeDisabled()
+  })
+
+  it('sends a message on form submit', async () => {
+    wrap(<ChatPage />)
     const input = screen.getByRole('textbox', { name: /message input/i })
-    fireEvent.change(input, { target: { value: 'Hello world' } })
+    fireEvent.change(input, { target: { value: 'Hello chat!' } })
     fireEvent.submit(input.closest('form')!)
-    expect(await screen.findByText('Hello world')).toBeInTheDocument()
+    expect(await screen.findByText('Hello chat!')).toBeInTheDocument()
   })
 
   it('clears input after sending', async () => {
-    renderChat()
+    wrap(<ChatPage />)
     const input = screen.getByRole('textbox', { name: /message input/i }) as HTMLInputElement
-    fireEvent.change(input, { target: { value: 'Test message' } })
+    fireEvent.change(input, { target: { value: 'Hi!' } })
     fireEvent.submit(input.closest('form')!)
-    await waitFor(() => expect(input.value).toBe(''))
+    await act(async () => {})
+    expect(input.value).toBe('')
   })
 
-  it('disables send button when input is empty', () => {
-    renderChat()
-    const btn = screen.getByRole('button', { name: /send/i })
-    expect(btn).toBeDisabled()
+  it('can create a new room', async () => {
+    wrap(<ChatPage />)
+    const addBtn = screen.getByRole('button', { name: /new room/i })
+    fireEvent.click(addBtn)
+    const nameInput = screen.getByLabelText(/room name/i)
+    fireEvent.change(nameInput, { target: { value: 'design' } })
+    fireEvent.submit(nameInput.closest('form')!)
+    expect(await screen.findByText(/# design/i)).toBeInTheDocument()
   })
 })

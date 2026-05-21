@@ -1,6 +1,6 @@
 # Chat App
 
-A real-time chat application with a live article polling feed, built with React + TypeScript + Vite.
+Real-time messaging with authentication, multi-room chat, direct messages, and profile management. Built with React + TypeScript + Vite. Messages persist in localStorage and sync across browser tabs via BroadcastChannel API.
 
 ## Prerequisites
 

@@ -1,39 +1,48 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import type { ReactElement } from 'react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { ArticlesPage } from '../pages/ArticlesPage'
+import { AuthProvider } from '../contexts/AuthContext'
+import LoginPage from '../pages/LoginPage'
+import RegisterPage from '../pages/RegisterPage'
 
-function renderArticles() {
+function wrap(ui: ReactElement) {
   return render(
     <MemoryRouter>
-      <ArticlesPage />
+      <AuthProvider>{ui}</AuthProvider>
     </MemoryRouter>,
   )
 }
 
-describe('ArticlesPage', () => {
-  it('renders the article feed heading', () => {
-    renderArticles()
-    expect(screen.getByRole('heading', { name: /articles/i })).toBeInTheDocument()
+describe('Auth pages', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('login form has email and password fields', () => {
+    wrap(<LoginPage />)
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
   })
 
-  it('renders seed articles', () => {
-    renderArticles()
-    expect(screen.getByText(/The Future of AI/i)).toBeInTheDocument()
-    expect(screen.getByText(/Web Performance/i)).toBeInTheDocument()
+  it('shows error on wrong credentials', async () => {
+    wrap(<LoginPage />)
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'x@x.com' } })
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'wrong' } })
+    fireEvent.submit(screen.getByRole('button', { name: /sign in/i }).closest('form')!)
+    await waitFor(() => expect(screen.getByText(/no account found/i)).toBeInTheDocument())
   })
 
-  it('shows polling status', () => {
-    renderArticles()
-    expect(screen.getByText(/Polling every 10 s/i)).toBeInTheDocument()
+  it('register form has username, email, password', () => {
+    wrap(<RegisterPage />)
+    expect(screen.getByLabelText(/username/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
   })
 
-  it('pauses and resumes polling via button', () => {
-    renderArticles()
-    const btn = screen.getByRole('button', { name: /pause/i })
-    fireEvent.click(btn)
-    expect(screen.getByText(/Polling paused/i)).toBeInTheDocument()
-    const resumeBtn = screen.getByRole('button', { name: /resume/i })
-    fireEvent.click(resumeBtn)
-    expect(screen.getByText(/Polling every 10 s/i)).toBeInTheDocument()
+  it('register shows error for short password', async () => {
+    wrap(<RegisterPage />)
+    fireEvent.change(screen.getByLabelText(/username/i), { target: { value: 'alice' } })
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'a@a.com' } })
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: '123' } })
+    fireEvent.submit(screen.getByRole('button', { name: /create account/i }).closest('form')!)
+    await waitFor(() => expect(screen.getByText(/at least 6/i)).toBeInTheDocument())
   })
 })
