@@ -28,7 +28,7 @@
     {
       "id": "FDEPLOY",
       "name": "Deploy to Vercel",
-      "status": "pending",
+      "status": "done",
       "verification": "vercel --prod returns a live https:// URL"
     }
   ]
