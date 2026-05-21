@@ -1,0 +1,35 @@
+{
+  "project": "chat-app",
+  "features": [
+    {
+      "id": "F001",
+      "name": "Project scaffold",
+      "status": "done",
+      "verification": "init.sh passes"
+    },
+    {
+      "id": "F002",
+      "name": "App shell with routing",
+      "status": "done",
+      "verification": "npm run dev starts without errors, /chat and /articles routes work"
+    },
+    {
+      "id": "F003",
+      "name": "Chat interface",
+      "status": "done",
+      "verification": "User can send messages, bot replies, messages scroll into view"
+    },
+    {
+      "id": "F004",
+      "name": "Article polling",
+      "status": "done",
+      "verification": "Articles feed updates on interval, pause/resume works"
+    },
+    {
+      "id": "FDEPLOY",
+      "name": "Deploy to Vercel",
+      "status": "pending",
+      "verification": "vercel --prod returns a live https:// URL"
+    }
+  ]
+}
